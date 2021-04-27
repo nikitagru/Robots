@@ -2,12 +2,16 @@ package model;
 
 import javax.vecmath.Vector2d;
 import java.awt.*;
+import java.io.IOException;
 
 public class RobotController {
 
     private volatile int targetPositionX = 150;
     private volatile int targetPositionY = 100;
-    private Robot robot = new Robot(new Vector2d(targetPositionX, targetPositionY));
+    private Robot robot = new Robot();
+
+    public RobotController() throws IOException {
+    }
 
 
     public Robot getRobot() {
@@ -22,10 +26,10 @@ public class RobotController {
         return targetPositionY;
     }
 
-    private static double distance(double x1, double y1, double x2, double y2)
+    public static double distance(double targetX, double targetY, double robotX, double robotY)
     {
-        double diffX = x1 - x2;
-        double diffY = y1 - y2;
+        double diffX = targetX - robotX;
+        double diffY = targetY - robotY;
         return Math.sqrt(diffX * diffX + diffY * diffY);
     }
 
@@ -99,9 +103,5 @@ public class RobotController {
     {
         targetPositionX = p.x;
         targetPositionY = p.y;
-    }
-
-    public double rotate(int targetX, int targetY) {
-        return robot.getRotation().angle(new Vector2d(targetX, targetY));
     }
 }

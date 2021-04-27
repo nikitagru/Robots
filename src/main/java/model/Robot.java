@@ -1,6 +1,11 @@
 package model;
 
+import javax.imageio.ImageIO;
 import javax.vecmath.Vector2d;
+import java.awt.image.BufferedImage;
+import java.io.File;
+import java.io.IOException;
+import java.net.URL;
 
 public class Robot {
     private volatile double robotPositionX = 100;
@@ -10,10 +15,13 @@ public class Robot {
     private final double velocity = 1.0;
     private final double maxAngularVelocity = 0.001;
 
-    private Vector2d rotation;
+    private final BufferedImage robotImage;
 
-    public Robot(Vector2d rotation) {
-        this.rotation = rotation;
+    private int rotation;
+
+    public Robot() throws IOException {
+        ClassLoader cl = getClass().getClassLoader();
+        robotImage = ImageIO.read(new File(cl.getResource("wall.png").getPath()));
     }
     
 
@@ -49,11 +57,15 @@ public class Robot {
         return maxAngularVelocity;
     }
 
-    public Vector2d getRotation() {
+    public int getRotation() {
         return rotation;
     }
 
-    public void setRotation(Vector2d rotation) {
+    public void setRotation(int rotation) {
         this.rotation = rotation;
+    }
+
+    public BufferedImage getRobotImage() {
+        return robotImage;
     }
 }

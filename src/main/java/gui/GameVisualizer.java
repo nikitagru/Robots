@@ -11,6 +11,7 @@ import java.awt.Point;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.geom.AffineTransform;
+import java.io.IOException;
 import java.util.Timer;
 import java.util.TimerTask;
 
@@ -31,8 +32,7 @@ public class GameVisualizer extends JPanel
     private int updateFrameTime = 10;
 
     
-    public GameVisualizer()
-    {
+    public GameVisualizer() throws IOException {
         timer.schedule(new TimerTask()
         {
             @Override

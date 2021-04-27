@@ -1,6 +1,7 @@
 package gui;
 
 import java.awt.BorderLayout;
+import java.io.IOException;
 
 import javax.swing.JInternalFrame;
 import javax.swing.JPanel;
@@ -8,8 +9,7 @@ import javax.swing.JPanel;
 public class GameWindow extends JInternalFrame
 {
     private final GameVisualizer visualizer;
-    public GameWindow() 
-    {
+    public GameWindow() throws IOException {
         super("Игровое поле", true, true, true, true);
         visualizer = new GameVisualizer();
         JPanel panel = new JPanel(new BorderLayout());
