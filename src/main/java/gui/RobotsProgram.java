@@ -19,7 +19,7 @@ public class RobotsProgram
           windows.setVisible (true);
           try {
               windows.MakeWindow();
-          } catch (IOException e) {
+          } catch (IOException | ClassNotFoundException e) {
               e.printStackTrace();
           }
           // MainApplicationFrame frame = new MainApplicationFrame();

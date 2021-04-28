@@ -2,6 +2,9 @@ package gui;
 
 import com.sun.xml.internal.ws.api.model.wsdl.WSDLOutput;
 import model.RobotController;
+import model.UserDeser;
+import model.UserSer;
+import model.UsersProfile;
 
 import javax.swing.*;
 import java.awt.*;
@@ -11,6 +14,7 @@ import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.geom.AffineTransform;
 import java.io.IOException;
+import java.util.Arrays;
 
 public class Level extends JPanel {
 
@@ -25,9 +29,14 @@ public class Level extends JPanel {
 
     private int levelNum;
 
+    private UsersProfile currentPlayer;
+
     private GameLevels gameLevels = new GameLevels();
 
     private int[][] level;
+
+    private JFrame mainWindow;
+
     
     Timer timerMap = new Timer(10, new ActionListener() {
         @Override
@@ -39,15 +48,21 @@ public class Level extends JPanel {
     Timer timer = new Timer(10, new ActionListener() {
         @Override
         public void actionPerformed(ActionEvent e) {
-            onModelUpdateEvent();
+            try {
+                onModelUpdateEvent();
+            } catch (IOException ioException) {
+                ioException.printStackTrace();
+            }
         }
     });
 
 
-
-    public Level(int levelNum) throws IOException {
+    public Level(int levelNum, JFrame frame, UsersProfile currentPlayer) throws IOException {
         this.levelNum = levelNum;
-        level = gameLevels.getLevel(levelNum);
+        level = Arrays.stream(gameLevels.getLevel(levelNum)).toArray(int[][]::new);
+        mainWindow = frame;
+
+        this.currentPlayer = currentPlayer;
 
         timer.start();
         timerMap.start();
@@ -59,6 +74,7 @@ public class Level extends JPanel {
                 robotController.setTargetPosition(e.getPoint());
             }
         });
+
         setDoubleBuffered(true);
     }
 
@@ -74,6 +90,20 @@ public class Level extends JPanel {
         drawRobot(g);
         Graphics2D graphics2D = (Graphics2D)g;
         drawTarget(graphics2D, robotController.getTargetPositionX(), robotController.getTargetPositionY());
+        if (robotController.getRobot().getRobotPositionX() <= finishX + linkSize
+                && robotController.getRobot().getRobotPositionX() >= finishX - linkSize
+                && robotController.getRobot().getRobotPositionY() <= finishY + linkSize
+                && robotController.getRobot().getRobotPositionY() >= finishY - linkSize) {
+            levelNum++;
+            if (levelNum == gameLevels.getLevelsCount() + 1) {
+                this.setVisible(false);
+                mainWindow.setVisible(true);
+                mainWindow.revalidate();
+            }
+            level = gameLevels.getLevel(levelNum);
+        }
+
+
     }
 
     public void drawLevel(Graphics g) {
@@ -85,6 +115,7 @@ public class Level extends JPanel {
                 } else if (level[i][j] == 2) {
                     robotController.getRobot().setRobotPositionX(j * 32 + startPositionX);
                     robotController.getRobot().setRobotPositionY(i * 32 + startPositionY);
+                    System.out.println("level " + levelNum + " has been changed");
                     level[i][j] = 0;
                 } else if (level[i][j] == 3) {
                     drawFinish(g, j * 32 + startPositionX, i * 32 + startPositionY);
@@ -123,20 +154,9 @@ public class Level extends JPanel {
         g.drawOval(centerX - diam1 / 2, centerY - diam2 / 2, diam1, diam2);
     }
 
-    private void onModelUpdateEvent()
-    {
+    private void onModelUpdateEvent() throws IOException {
         robotController.updateRobot(level, linkSize, startPositionX, startPositionY);
-
-        if (robotController.getRobot().getRobotPositionX() <= finishX + linkSize
-                && robotController.getRobot().getRobotPositionX() >= finishX - linkSize
-                && robotController.getRobot().getRobotPositionY() <= finishY + linkSize
-                && robotController.getRobot().getRobotPositionY() >= finishY - linkSize) {
-            System.out.println("arrived");
-            if (levelNum == gameLevels.getLevelsCount()) {
-                levelNum = 0;
-            }
-            level = gameLevels.getLevel(levelNum++);
-        }
+        saveData();
     }
 
     public void drawRobot(Graphics g) {
@@ -169,5 +189,13 @@ public class Level extends JPanel {
             robotImage.paintComponents(g);
         }
 
+    }
+
+    private void saveData() throws IOException {
+        currentPlayer.setLevel(levelNum);
+        if (levelNum == 2) {
+            System.out.println();
+        }
+        UserSer.userSer(currentPlayer);
     }
 }
