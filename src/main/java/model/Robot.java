@@ -12,7 +12,7 @@ public class Robot {
     private volatile double robotPositionY = 100;
     private volatile double robotDirection = 0;
 
-    private final double velocity = 1.0;
+    private final double velocity = 5.0;
     private final double maxAngularVelocity = 0.001;
 
     private final BufferedImage robotImage;

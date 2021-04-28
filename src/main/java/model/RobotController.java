@@ -52,7 +52,7 @@ public class RobotController {
     public void updateRobot(int[][] level, int linkSize, int startPositionX, int startPositionY) {
         double distance = distance(targetPositionX, targetPositionY,
                 robot.getRobotPositionX(), robot.getRobotPositionY());
-        if (distance < 100.0)
+        if (distance < 10.0)
         {
             return;
         }

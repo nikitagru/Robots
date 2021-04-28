@@ -14,11 +14,17 @@ public class MainWindow extends JFrame
     private JButton Exit = new JButton("Выход");
 
     public void MakeWindow() throws IOException {
-        Level level = new Level();
-        frame.add(level);
-        frame.setVisible(true);
         JPanel panel = new JPanel();
         NewGame.addActionListener(e -> {
+            Level level = null;
+            try {
+                level = new Level(1);
+            } catch (IOException ioException) {
+                ioException.printStackTrace();
+            }
+            frame.add(level);
+            frame.setVisible(true);
+
             level.setSize(Toolkit.getDefaultToolkit().getScreenSize());
             level.setVisible(true);
             this.setVisible(false);

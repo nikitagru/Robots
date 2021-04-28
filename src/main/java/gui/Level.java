@@ -1,5 +1,6 @@
 package gui;
 
+import com.sun.xml.internal.ws.api.model.wsdl.WSDLOutput;
 import model.RobotController;
 
 import javax.swing.*;
@@ -10,7 +11,6 @@ import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.geom.AffineTransform;
 import java.io.IOException;
-import java.util.TimerTask;
 
 public class Level extends JPanel {
 
@@ -19,8 +19,17 @@ public class Level extends JPanel {
     private int startPositionX = 650;
     private int startPositionY = 300;
     private int linkSize = 32;
+
+    private double finishX;
+    private double finishY;
+
+    private int levelNum;
+
+    private GameLevels gameLevels = new GameLevels();
+
+    private int[][] level;
     
-    Timer timerMap = new Timer(100, new ActionListener() {
+    Timer timerMap = new Timer(10, new ActionListener() {
         @Override
         public void actionPerformed(ActionEvent e) {
             onRedrawEvent();
@@ -36,23 +45,10 @@ public class Level extends JPanel {
 
 
 
-    public Level() throws IOException {
-//        timer.schedule(new TimerTask()
-//        {
-//            @Override
-//            public void run()
-//            {
-//                onRedrawEvent();
-//            }
-//        }, 0, 10);
-//        timer.schedule(new TimerTask()
-//        {
-//            @Override
-//            public void run()
-//            {
-//
-//            }
-//        }, 0, 10);
+    public Level(int levelNum) throws IOException {
+        this.levelNum = levelNum;
+        level = gameLevels.getLevel(levelNum);
+
         timer.start();
         timerMap.start();
         addMouseListener(new MouseAdapter()
@@ -69,26 +65,7 @@ public class Level extends JPanel {
     protected void onRedrawEvent()
     {
         EventQueue.invokeLater(this::repaint);
-        //drawLevel();
     }
-    int[][] level1 = new int[][] {
-            {1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1},
-            {1, 0, 0, 0, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 1},
-            {1, 0, 2, 0, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 1},
-            {1, 0, 0, 0, 1, 1, 1, 0, 0, 0, 0, 0, 1, 0, 0, 1},
-            {1, 0, 0, 0, 1, 1, 1, 0, 0, 0, 0, 0, 1, 0, 0, 1},
-            {1, 0, 0, 0, 1, 1, 1, 0, 0, 0, 0, 0, 1, 0, 0, 1},
-            {1, 0, 0, 1, 1, 1, 1, 0, 0, 0, 0, 0, 1, 0, 0, 1},
-            {1, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 1, 0, 0, 1},
-            {1, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 1, 0, 0, 1},
-            {1, 0, 0, 1, 0, 0, 1, 0, 0, 1, 0, 0, 1, 0, 0, 1},
-            {1, 0, 0, 1, 0, 0, 1, 0, 0, 1, 0, 0, 1, 0, 0, 1},
-            {1, 0, 0, 1, 0, 0, 1, 0, 0, 1, 0, 0, 1, 0, 0, 1},
-            {1, 0, 0, 1, 0, 0, 1, 1, 1, 1, 0, 0, 1, 0, 0, 1},
-            {1, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 1, 3, 0, 1},
-            {1, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 1},
-            {1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1}
-    };
 
     @Override
     public void paint(Graphics g) {
@@ -100,19 +77,30 @@ public class Level extends JPanel {
     }
 
     public void drawLevel(Graphics g) {
-        for (int i = 0 ; i < level1.length; i++) {
-            for (int j = 0; j < level1[0].length; j++) {
-                if (level1[i][j] == 1) {
+        for (int i = 0; i < level.length; i++) {
+            for (int j = 0; j < level[0].length; j++) {
+                if (level[i][j] == 1) {
                     Wall wall = new Wall(j * 32 + startPositionX, i * 32 + startPositionY);
                     wall.paintComponent(g);
-                } else if (level1[i][j] == 2) {
+                } else if (level[i][j] == 2) {
                     robotController.getRobot().setRobotPositionX(j * 32 + startPositionX);
                     robotController.getRobot().setRobotPositionY(i * 32 + startPositionY);
-                    level1[i][j] = 0;
+                    level[i][j] = 0;
+                } else if (level[i][j] == 3) {
+                    drawFinish(g, j * 32 + startPositionX, i * 32 + startPositionY);
+                    finishX = j * 32 + startPositionX;
+                    finishY = i * 32 + startPositionY;
                 }
             }
         }
 
+    }
+
+    private void drawFinish(Graphics g, int x, int y) {
+        Graphics2D graphics2D = (Graphics2D)g;
+        graphics2D.drawRect(x, y, 32, 32);
+        graphics2D.setColor(Color.ORANGE);
+        graphics2D.fillRect(x, y, 32, 32);
     }
 
     private void drawTarget(Graphics2D g, int x, int y)
@@ -137,7 +125,18 @@ public class Level extends JPanel {
 
     private void onModelUpdateEvent()
     {
-        robotController.updateRobot(level1, linkSize, startPositionX, startPositionY);
+        robotController.updateRobot(level, linkSize, startPositionX, startPositionY);
+
+        if (robotController.getRobot().getRobotPositionX() <= finishX + linkSize
+                && robotController.getRobot().getRobotPositionX() >= finishX - linkSize
+                && robotController.getRobot().getRobotPositionY() <= finishY + linkSize
+                && robotController.getRobot().getRobotPositionY() >= finishY - linkSize) {
+            System.out.println("arrived");
+            if (levelNum == gameLevels.getLevelsCount()) {
+                levelNum = 0;
+            }
+            level = gameLevels.getLevel(levelNum++);
+        }
     }
 
     public void drawRobot(Graphics g) {
@@ -152,7 +151,7 @@ public class Level extends JPanel {
                 robotController.getRobot().getRobotPositionX(),
                 robotController.getRobot().getRobotPositionY());
 
-        if (distance >= 100.0) {
+        if (distance >= 10.0) {
             if (currentFrame == 14) {
                 currentFrame = 0;
             }
