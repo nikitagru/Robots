@@ -30,12 +30,13 @@ public class RobotImage extends JPanel {
         } catch (IOException ex) {
             ex.printStackTrace();
         }
+        setDoubleBuffered(true);
     }
 
     @Override
     public void paintComponents(Graphics g) {
         super.paintComponents(g);
-        Graphics2D graphics2D = (Graphics2D) g.create();
+        Graphics2D graphics2D = (Graphics2D)g;
         BufferedImage cropedImage = image.getSubimage(x, 15 * rotation, width, height);
         graphics2D.drawImage(cropedImage, positionX, positionY, this);
     }

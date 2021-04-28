@@ -13,20 +13,15 @@ public class MainWindow extends JFrame
     private JButton Settings = new JButton("Настройки");
     private JButton Exit = new JButton("Выход");
 
-    public void MakeWindow()
-    {
+    public void MakeWindow() throws IOException {
+        Level level = new Level();
+        frame.add(level);
+        frame.setVisible(true);
         JPanel panel = new JPanel();
         NewGame.addActionListener(e -> {
-
-            try {
-                Level level = new Level();
-                level.setVisible(true);
-                this.setVisible(false);
-                level.drawLevel();
-                level.setSize(Toolkit.getDefaultToolkit().getScreenSize());
-            } catch (IOException ioException) {
-                ioException.printStackTrace();
-            }
+            level.setSize(Toolkit.getDefaultToolkit().getScreenSize());
+            level.setVisible(true);
+            this.setVisible(false);
         });
 
         LoadingGame.addActionListener(e -> {

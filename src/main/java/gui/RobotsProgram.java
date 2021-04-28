@@ -2,6 +2,7 @@ package gui;
 
 import javax.swing.SwingUtilities;
 import javax.swing.UIManager;
+import java.io.IOException;
 
 public class RobotsProgram
 {
@@ -16,8 +17,12 @@ public class RobotsProgram
           MainWindow windows = new MainWindow();
           windows.pack();
           windows.setVisible (true);
-          windows.MakeWindow();
-       // MainApplicationFrame frame = new MainApplicationFrame();
+          try {
+              windows.MakeWindow();
+          } catch (IOException e) {
+              e.printStackTrace();
+          }
+          // MainApplicationFrame frame = new MainApplicationFrame();
        // frame.pack();//вызывает окно
       //  frame.setVisible(true);
      //   frame.setExtendedState(Frame.MAXIMIZED_BOTH);//расрывает на полный экран

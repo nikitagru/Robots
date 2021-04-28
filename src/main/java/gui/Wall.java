@@ -29,9 +29,8 @@ public class Wall extends JPanel {
 
 
     @Override
-    public void paintComponents(Graphics g) {
+    public void paintComponent(Graphics g) {
         super.paintComponents(g);
-        Graphics2D graphics2D = (Graphics2D)g;
-        graphics2D.drawImage(image, x, y, this);
+        g.drawImage(image, x, y, this);
     }
 }

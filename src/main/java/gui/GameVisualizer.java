@@ -68,7 +68,7 @@ public class GameVisualizer extends JPanel
     
     private void onModelUpdateEvent()
     {
-        robotController.updateRobot();
+        //robotController.updateRobot();
     }
     
     private static int round(double value)
