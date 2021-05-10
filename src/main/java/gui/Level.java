@@ -1,10 +1,6 @@
 package gui;
 
-import com.sun.xml.internal.ws.api.model.wsdl.WSDLOutput;
-import model.RobotController;
-import model.UserDeser;
-import model.UserSer;
-import model.UsersProfile;
+import model.*;
 
 import javax.swing.*;
 import java.awt.*;
@@ -32,6 +28,7 @@ public class Level extends JPanel {
     private UsersProfile currentPlayer;
 
     private GameLevels gameLevels = new GameLevels();
+    private LevelModel levelModel = new LevelModel();
 
     private int[][] level;
 
@@ -90,10 +87,7 @@ public class Level extends JPanel {
         drawRobot(g);
         Graphics2D graphics2D = (Graphics2D)g;
         drawTarget(graphics2D, robotController.getTargetPositionX(), robotController.getTargetPositionY());
-        if (robotController.getRobot().getRobotPositionX() <= finishX + linkSize
-                && robotController.getRobot().getRobotPositionX() >= finishX - linkSize
-                && robotController.getRobot().getRobotPositionY() <= finishY + linkSize
-                && robotController.getRobot().getRobotPositionY() >= finishY - linkSize) {
+        if (levelModel.isFinished(robotController, finishX, finishY, linkSize)) {
             levelNum++;
             if (levelNum == gameLevels.getLevelsCount() + 1) {
                 this.setVisible(false);
@@ -102,8 +96,6 @@ public class Level extends JPanel {
             }
             level = gameLevels.getLevel(levelNum);
         }
-
-
     }
 
     public void drawLevel(Graphics g) {
@@ -115,7 +107,6 @@ public class Level extends JPanel {
                 } else if (level[i][j] == 2) {
                     robotController.getRobot().setRobotPositionX(j * 32 + startPositionX);
                     robotController.getRobot().setRobotPositionY(i * 32 + startPositionY);
-                    System.out.println("level " + levelNum + " has been changed");
                     level[i][j] = 0;
                 } else if (level[i][j] == 3) {
                     drawFinish(g, j * 32 + startPositionX, i * 32 + startPositionY);
@@ -193,9 +184,6 @@ public class Level extends JPanel {
 
     private void saveData() throws IOException {
         currentPlayer.setLevel(levelNum);
-        if (levelNum == 2) {
-            System.out.println();
-        }
         UserSer.userSer(currentPlayer);
     }
 }

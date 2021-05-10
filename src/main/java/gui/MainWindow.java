@@ -30,7 +30,7 @@ public class MainWindow extends JFrame
             }
             Level level = null;
             try {
-                level = new Level(1, frame, usersProfile);
+                level = new Level(0, frame, usersProfile);
             } catch (IOException ioException) {
                 ioException.printStackTrace();
             }
@@ -76,8 +76,8 @@ public class MainWindow extends JFrame
         panel.add(LoadingGame);
         panel.add(Settings);
         panel.add(Exit);
-        panel.setBackground(Color.BLUE);
         userProfileJComboBox.addItem(null);
+        panel.setBackground(Color.BLUE);
         panel.add(userProfileJComboBox);
         frame.add(panel);
         frame.setSize(Toolkit.getDefaultToolkit().getScreenSize());
@@ -85,15 +85,18 @@ public class MainWindow extends JFrame
     }
 
     private void checkProfiles() throws IOException, ClassNotFoundException {
-        ClassLoader cl = getClass().getClassLoader();
-        File folder = new File("E:\\JavaProjects\\OOP\\Robots\\robots\\src\\main\\resources\\profiles\\");
+        File folder = new File("F:\\JavaProjects\\OOP\\Robots\\robots\\src\\main\\resources\\profiles\\");
 
         File[] files = folder.listFiles();
 
         UserDeser userDeser = new UserDeser();
 
-        for (File file : files) {
-            userProfileJComboBox.addItem(userDeser.userDeser(file));
+        if (files != null) {
+            for (File file : files) {
+                userProfileJComboBox.addItem(userDeser.userDeser(file));
+            }
         }
     }
 }
+
+// Исправить зоны ответственности, записать конфиги уровней в ресурсы

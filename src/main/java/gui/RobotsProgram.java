@@ -22,9 +22,5 @@ public class RobotsProgram
           } catch (IOException | ClassNotFoundException e) {
               e.printStackTrace();
           }
-          // MainApplicationFrame frame = new MainApplicationFrame();
-       // frame.pack();//вызывает окно
-      //  frame.setVisible(true);
-     //   frame.setExtendedState(Frame.MAXIMIZED_BOTH);//расрывает на полный экран
       });
     }}
