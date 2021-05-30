@@ -4,10 +4,7 @@ import model.*;
 
 import javax.swing.*;
 import java.awt.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.awt.event.MouseAdapter;
-import java.awt.event.MouseEvent;
+import java.awt.event.*;
 import java.awt.geom.AffineTransform;
 import java.io.IOException;
 import java.util.Arrays;
@@ -26,6 +23,7 @@ public class Level extends JPanel {
     private int levelNum;
 
     private UsersProfile currentPlayer;
+
 
     private GameLevels gameLevels = new GameLevels();
     private LevelModel levelModel = new LevelModel();
@@ -75,6 +73,7 @@ public class Level extends JPanel {
         setDoubleBuffered(true);
     }
 
+
     protected void onRedrawEvent()
     {
         EventQueue.invokeLater(this::repaint);
@@ -95,6 +94,12 @@ public class Level extends JPanel {
                 mainWindow.revalidate();
             }
             level = gameLevels.getLevel(levelNum);
+            currentPlayer.setLevel(levelNum);
+            try {
+                UserSer.userSer(currentPlayer);
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
         }
     }
 
@@ -147,7 +152,6 @@ public class Level extends JPanel {
 
     private void onModelUpdateEvent() throws IOException {
         robotController.updateRobot(level, linkSize, startPositionX, startPositionY);
-        saveData();
     }
 
     public void drawRobot(Graphics g) {
@@ -182,8 +186,4 @@ public class Level extends JPanel {
 
     }
 
-    private void saveData() throws IOException {
-        currentPlayer.setLevel(levelNum);
-        UserSer.userSer(currentPlayer);
-    }
 }

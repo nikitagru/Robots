@@ -12,7 +12,6 @@ import java.util.List;
 public class GameLevels{
     private List<int[][]> levels = new ArrayList<>();
 
-
     public GameLevels() throws FileNotFoundException {
         Gson gson = new Gson();
 

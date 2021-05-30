@@ -10,7 +10,7 @@ import java.io.IOException;
 
 public class MainWindow extends JFrame
 {
-    static JFrame frame = new JFrame();
+    private JFrame frame = new JFrame();
 
     private JButton NewGame = new JButton("Новая игра");
     private JButton LoadingGame = new JButton("Загрузить игру");
@@ -18,17 +18,21 @@ public class MainWindow extends JFrame
     private JButton Exit = new JButton("Выход");
     private JComboBox<UsersProfile> userProfileJComboBox = new JComboBox<>();
 
+    private Level level;
+
+    private UsersProfile usersProfile;
+    
     public void MakeWindow() throws IOException, ClassNotFoundException {
         JPanel panel = new JPanel();
 
         NewGame.addActionListener(e -> {
-            UsersProfile usersProfile = (UsersProfile) userProfileJComboBox.getSelectedItem();
+            usersProfile = (UsersProfile) userProfileJComboBox.getSelectedItem();
 
             if (usersProfile == null) {
                 String result = JOptionPane.showInputDialog("Введите ваше имя");
                 usersProfile = new UsersProfile(result);
             }
-            Level level = null;
+
             try {
                 level = new Level(0, frame, usersProfile);
             } catch (IOException ioException) {
@@ -43,14 +47,13 @@ public class MainWindow extends JFrame
         });
 
         LoadingGame.addActionListener(e -> {
-            UsersProfile usersProfile = (UsersProfile) userProfileJComboBox.getSelectedItem();
+            usersProfile = (UsersProfile) userProfileJComboBox.getSelectedItem();
 
             if (usersProfile == null) {
                 String result = JOptionPane.showInputDialog("Введите ваше имя");
                 usersProfile = new UsersProfile(result);
             }
 
-            Level level = null;
             try {
                 level = new Level(usersProfile.getLevel(), frame, usersProfile);
             } catch (IOException ioException) {
@@ -62,8 +65,8 @@ public class MainWindow extends JFrame
             level.setSize(Toolkit.getDefaultToolkit().getScreenSize());
             level.setVisible(true);
             this.setVisible(false);
-        });
 
+        });
 
 
         Settings.addActionListener(e -> {
@@ -85,7 +88,7 @@ public class MainWindow extends JFrame
     }
 
     private void checkProfiles() throws IOException, ClassNotFoundException {
-        File folder = new File("F:\\JavaProjects\\OOP\\Robots\\robots\\src\\main\\resources\\profiles\\");
+        File folder = new File("F:\\JavaProjects\\OOP\\Robots\\robots\\profiles\\");
 
         File[] files = folder.listFiles();
 
@@ -99,4 +102,3 @@ public class MainWindow extends JFrame
     }
 }
 
-// Исправить зоны ответственности, записать конфиги уровней в ресурсы
