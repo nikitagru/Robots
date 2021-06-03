@@ -1,10 +1,8 @@
 package gui;
-import model.UserDeser;
 import model.*;
 
 import javax.swing.*;
 import java.awt.*;
-import java.awt.event.*;
 import java.io.File;
 import java.io.IOException;
 
@@ -18,7 +16,7 @@ public class MainWindow extends JFrame
     private JButton Exit = new JButton("Выход");
     private JComboBox<UsersProfile> userProfileJComboBox = new JComboBox<>();
 
-    private Level level;
+    private LevelPresenter level;
 
     private UsersProfile usersProfile;
     
@@ -34,7 +32,7 @@ public class MainWindow extends JFrame
             }
 
             try {
-                level = new Level(0, frame, usersProfile);
+                level = new LevelPresenter(0, frame, usersProfile);
             } catch (IOException ioException) {
                 ioException.printStackTrace();
             }
@@ -55,7 +53,7 @@ public class MainWindow extends JFrame
             }
 
             try {
-                level = new Level(usersProfile.getLevel(), frame, usersProfile);
+                level = new LevelPresenter(usersProfile.getLevel(), frame, usersProfile);
             } catch (IOException ioException) {
                 ioException.printStackTrace();
             }
@@ -74,7 +72,7 @@ public class MainWindow extends JFrame
         });
 
         Exit.addActionListener(e -> System.exit(1));
-        checkProfiles();
+        UserSerialization.getProfiles(userProfileJComboBox);
         panel.add(NewGame);
         panel.add(LoadingGame);
         panel.add(Settings);
@@ -85,20 +83,6 @@ public class MainWindow extends JFrame
         frame.add(panel);
         frame.setSize(Toolkit.getDefaultToolkit().getScreenSize());
         frame.setVisible(true);
-    }
-
-    private void checkProfiles() throws IOException, ClassNotFoundException {
-        File folder = new File("F:\\JavaProjects\\OOP\\Robots\\robots\\profiles\\");
-
-        File[] files = folder.listFiles();
-
-        UserDeser userDeser = new UserDeser();
-
-        if (files != null) {
-            for (File file : files) {
-                userProfileJComboBox.addItem(userDeser.userDeser(file));
-            }
-        }
     }
 }
 

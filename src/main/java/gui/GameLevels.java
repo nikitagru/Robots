@@ -15,7 +15,7 @@ public class GameLevels{
     public GameLevels() throws FileNotFoundException {
         Gson gson = new Gson();
 
-        File folder = new File("F:\\JavaProjects\\OOP\\Robots\\robots\\src\\main\\resources\\levelMaps\\");
+        File folder = new File("F:\\Downloads\\Robots-cb7bdbd430f218b72443ecdcae97c650e5700800\\Robots-cb7bdbd430f218b72443ecdcae97c650e5700800\\src\\main\\resources\\levelMaps\\");
 
         File[] files = folder.listFiles();
 
