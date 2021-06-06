@@ -26,10 +26,10 @@ public class RobotController {
         return targetPositionY;
     }
 
-    public double distance(double targetX, double targetY, double robotX, double robotY)
+    public double distanceToTarget()
     {
-        double diffX = targetX - robotX;
-        double diffY = targetY - robotY;
+        double diffX = targetPositionX - robot.getRobotPositionX();
+        double diffY = targetPositionY - robot.getRobotPositionY();
         return Math.sqrt(diffX * diffX + diffY * diffY);
     }
 
@@ -50,8 +50,7 @@ public class RobotController {
     }
 
     public void updateRobot(int[][] level, int linkSize, int startPositionX, int startPositionY) {
-        double distance = distance(targetPositionX, targetPositionY,
-                robot.getRobotPositionX(), robot.getRobotPositionY());
+        double distance = distanceToTarget();
         if (distance < 10.0)
         {
             return;

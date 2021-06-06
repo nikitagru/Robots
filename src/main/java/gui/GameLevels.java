@@ -8,6 +8,7 @@ import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 public class GameLevels{
     private List<int[][]> levels = new ArrayList<>();
@@ -15,7 +16,9 @@ public class GameLevels{
     public GameLevels() throws FileNotFoundException {
         Gson gson = new Gson();
 
-        File folder = new File("F:\\Downloads\\Robots-cb7bdbd430f218b72443ecdcae97c650e5700800\\Robots-cb7bdbd430f218b72443ecdcae97c650e5700800\\src\\main\\resources\\levelMaps\\");
+        ClassLoader cl = getClass().getClassLoader();
+
+        File folder = new File(Objects.requireNonNull(cl.getResource("levelMaps/")).getPath());
 
         File[] files = folder.listFiles();
 

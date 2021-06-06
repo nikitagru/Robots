@@ -5,7 +5,7 @@ import java.io.*;
 
 public class UserSerialization {
 
-    private static String savePath = "F:\\profiles\\";
+    private static String savePath = "C:/Users/" + System.getProperty("user.name") + "/Documents/MazeRobot/";
 
     public static UsersProfile userDeser(File file)  {
 

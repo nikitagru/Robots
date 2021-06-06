@@ -15,15 +15,10 @@ public class LevelPresenter extends JPanel {
     private int currentFrame = 0;
     private int levelGapX = 650;
     private int levelGapY = 300;
-    private int linkSize = 32;
-
-    private double finishX;
-    private double finishY;
 
     private int levelNum;
 
     private UsersProfile currentPlayer;
-
 
     private GameLevels gameLevels = new GameLevels();
     private LevelController levelController = new LevelController();
@@ -33,21 +28,13 @@ public class LevelPresenter extends JPanel {
     private JFrame mainWindow;
 
     
-    Timer timerMap = new Timer(10, new ActionListener() {
-        @Override
-        public void actionPerformed(ActionEvent e) {
-            onRedrawEvent();
-        }
-    });
+    Timer timerMap = new Timer(10, e -> onRedrawEvent());
 
-    Timer timer = new Timer(10, new ActionListener() {
-        @Override
-        public void actionPerformed(ActionEvent e) {
-            try {
-                onModelUpdateEvent();
-            } catch (IOException ioException) {
-                ioException.printStackTrace();
-            }
+    Timer timer = new Timer(10, e -> {
+        try {
+            onModelUpdateEvent();
+        } catch (IOException ioException) {
+            ioException.printStackTrace();
         }
     });
 
@@ -97,18 +84,6 @@ public class LevelPresenter extends JPanel {
         this.level = level;
     }
 
-    public int getLinkSize() {
-        return linkSize;
-    }
-
-    public double getFinishX() {
-        return finishX;
-    }
-
-    public double getFinishY() {
-        return finishY;
-    }
-
     public int getLevelNum() {
         return levelNum;
     }
@@ -148,9 +123,9 @@ public class LevelPresenter extends JPanel {
         for (int i = 0; i < level.length; i++) {
             for (int j = 0; j < level[0].length; j++) {
                 if (level[i][j] == 3) {
-                    drawFinish(g, j * 32 + levelGapX, i * 32 + levelGapY);
-                    finishX = j * 32 + levelGapX;
-                    finishY = i * 32 + levelGapY;
+                    drawFinish(g, j * levelController.getLinkSize() + levelGapX, i * levelController.getLinkSize() + levelGapY);
+                    levelController.setFinishX(j, levelGapX);
+                    levelController.setFinishY(i, levelGapY);
                 } else {
                     levelController.drawComponent(this, i, j);
                 }
@@ -187,7 +162,7 @@ public class LevelPresenter extends JPanel {
     }
 
     private void onModelUpdateEvent() throws IOException {
-        robotController.updateRobot(level, linkSize, levelGapX, levelGapY);
+        robotController.updateRobot(level, levelController.getLinkSize(), levelGapX, levelGapY);
     }
 
     public void drawRobot(Graphics g) {
@@ -197,10 +172,7 @@ public class LevelPresenter extends JPanel {
             robotController.getRobot().setRobotDirection(0);
         }
 
-        double distance = robotController.distance(robotController.getTargetPositionX(),
-                robotController.getTargetPositionY(),
-                robotController.getRobot().getRobotPositionX(),
-                robotController.getRobot().getRobotPositionY());
+        double distance = robotController.distanceToTarget();
 
         if (distance >= 10.0) {
             if (currentFrame == 14) {
