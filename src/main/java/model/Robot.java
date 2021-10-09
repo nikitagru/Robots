@@ -15,15 +15,19 @@ public class Robot {
     private final double velocity = 5.0;
     private final double maxAngularVelocity = 0.001;
 
-    private final BufferedImage robotImage;
+    private BufferedImage robotImage = null;
 
     private int rotation;
 
-    public Robot() throws IOException {
-        ClassLoader cl = getClass().getClassLoader();
-        robotImage = ImageIO.read(new File(cl.getResource("wall.png").getPath()));
+    public Robot() {
+        try {
+            ClassLoader cl = getClass().getClassLoader();
+            robotImage = ImageIO.read(new File(cl.getResource("wall.png").getPath()));
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
     }
-    
 
     public double getRobotPositionX() {
         return robotPositionX;

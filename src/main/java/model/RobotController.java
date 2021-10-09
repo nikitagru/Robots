@@ -10,10 +10,6 @@ public class RobotController {
     private volatile int targetPositionY = 100;
     private Robot robot = new Robot();
 
-    public RobotController() throws IOException {
-    }
-
-
     public Robot getRobot() {
         return robot;
     }

@@ -7,21 +7,11 @@ import java.awt.*;
 import java.awt.event.*;
 import java.awt.geom.AffineTransform;
 import java.io.IOException;
-import java.util.Arrays;
 
 public class LevelPresenter extends JPanel {
-
-    private RobotController robotController = new RobotController();
     private int currentFrame = 0;
-    private int levelGapX = 650;
-    private int levelGapY = 300;
 
-    private int levelNum;
-
-    private UsersProfile currentPlayer;
-
-    private GameLevels gameLevels = new GameLevels();
-    private LevelController levelController = new LevelController();
+    private LevelController levelController;
 
     private int[][] level;
 
@@ -39,12 +29,10 @@ public class LevelPresenter extends JPanel {
     });
 
 
-    public LevelPresenter(int levelNum, JFrame frame, UsersProfile currentPlayer) throws IOException {
-        this.levelNum = levelNum;
-        level = Arrays.stream(gameLevels.getLevel(levelNum)).toArray(int[][]::new);
+    public LevelPresenter(JFrame frame, LevelController levelController) throws IOException {
+        level = levelController.getGameLevels().getLevelArray(levelController.getLevelNum());
         mainWindow = frame;
-
-        this.currentPlayer = currentPlayer;
+        this.levelController = levelController;
 
         timer.start();
         timerMap.start();
@@ -53,7 +41,7 @@ public class LevelPresenter extends JPanel {
             @Override
             public void mouseClicked(MouseEvent e)
             {
-                robotController.setTargetPosition(e.getPoint());
+                levelController.getRobotController().setTargetPosition(e.getPoint());
             }
         });
 
@@ -64,18 +52,6 @@ public class LevelPresenter extends JPanel {
         return level;
     }
 
-    public int getLevelGapX() {
-        return levelGapX;
-    }
-
-    public int getLevelGapY() {
-        return levelGapY;
-    }
-
-    public RobotController getRobotController() {
-        return robotController;
-    }
-
     public void setLevelPoint(int x, int y, int value) {
         level[x][y] = value;
     }
@@ -84,24 +60,8 @@ public class LevelPresenter extends JPanel {
         this.level = level;
     }
 
-    public int getLevelNum() {
-        return levelNum;
-    }
-
-    public void setLevelNum(int levelNum) {
-        this.levelNum = levelNum;
-    }
-
-    public GameLevels getGameLevels() {
-        return gameLevels;
-    }
-
     public JFrame getMainWindow() {
         return mainWindow;
-    }
-
-    public UsersProfile getCurrentPlayer() {
-        return currentPlayer;
     }
 
     protected void onRedrawEvent()
@@ -115,7 +75,7 @@ public class LevelPresenter extends JPanel {
         drawLevel(g);
         drawRobot(g);
         Graphics2D graphics2D = (Graphics2D)g;
-        drawTarget(graphics2D, robotController.getTargetPositionX(), robotController.getTargetPositionY());
+        drawTarget(graphics2D, levelController.getRobotController().getTargetPositionX(), levelController.getRobotController().getTargetPositionY());
         levelController.changeLevel(this);
     }
 
@@ -123,15 +83,13 @@ public class LevelPresenter extends JPanel {
         for (int i = 0; i < level.length; i++) {
             for (int j = 0; j < level[0].length; j++) {
                 if (level[i][j] == 3) {
-                    drawFinish(g, j * levelController.getLinkSize() + levelGapX, i * levelController.getLinkSize() + levelGapY);
-                    levelController.setFinishX(j, levelGapX);
-                    levelController.setFinishY(i, levelGapY);
+                    drawFinish(g, j * levelController.getLinkSize() + levelController.getLevelGapX(),
+                            i * levelController.getLinkSize() + levelController.getLevelGapY());
                 } else {
                     levelController.drawComponent(this, i, j);
                 }
             }
         }
-
     }
 
     private void drawFinish(Graphics g, int x, int y) {
@@ -162,33 +120,29 @@ public class LevelPresenter extends JPanel {
     }
 
     private void onModelUpdateEvent() throws IOException {
-        robotController.updateRobot(level, levelController.getLinkSize(), levelGapX, levelGapY);
+        levelController.getRobotController().updateRobot(level, levelController.getLinkSize(),
+                levelController.getLevelGapX(), levelController.getLevelGapY());
     }
 
     public void drawRobot(Graphics g) {
-        if (robotController.getRobot().getRobotPositionX() > robotController.getTargetPositionX()) {
-            robotController.getRobot().setRobotDirection(1);
-        } else {
-            robotController.getRobot().setRobotDirection(0);
-        }
-
-        double distance = robotController.distanceToTarget();
+        levelController.changeRobotDirection();
+        double distance = levelController.getRobotController().distanceToTarget();
 
         if (distance >= 10.0) {
             if (currentFrame == 14) {
                 currentFrame = 0;
             }
             RobotImage robotImage = new RobotImage(currentFrame * 16,
-                    (int)robotController.getRobot().getRobotPositionX(),
-                    (int)robotController.getRobot().getRobotPositionY(),
-                    (int)robotController.getRobot().getRobotDirection());
+                    (int)levelController.getRobotController().getRobot().getRobotPositionX(),
+                    (int)levelController.getRobotController().getRobot().getRobotPositionY(),
+                    (int)levelController.getRobotController().getRobot().getRobotDirection());
             robotImage.paintComponents(g);
             currentFrame++;
         } else {
             RobotImage robotImage = new RobotImage(0,
-                    (int)robotController.getRobot().getRobotPositionX(),
-                    (int)robotController.getRobot().getRobotPositionY(),
-                    (int)robotController.getRobot().getRobotDirection());
+                    (int)levelController.getRobotController().getRobot().getRobotPositionX(),
+                    (int)levelController.getRobotController().getRobot().getRobotPositionY(),
+                    (int)levelController.getRobotController().getRobot().getRobotDirection());
             robotImage.paintComponents(g);
         }
 

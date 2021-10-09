@@ -11,9 +11,9 @@ import java.util.List;
 import java.util.Objects;
 
 public class GameLevels{
-    private List<int[][]> levels = new ArrayList<>();
+    private List<Level> levels = new ArrayList<>();
 
-    public GameLevels() throws FileNotFoundException {
+    public GameLevels() {
         Gson gson = new Gson();
 
         ClassLoader cl = getClass().getClassLoader();
@@ -23,14 +23,25 @@ public class GameLevels{
         File[] files = folder.listFiles();
 
         for (File file : files) {
-            JsonReader reader1 = new JsonReader(new FileReader(file));
+            JsonReader reader = null;
+            try {
+                reader = new JsonReader(new FileReader(file));
+            } catch (FileNotFoundException e) {
+                e.printStackTrace();
+            }
 
-            levels.add(gson.fromJson(reader1, int[][].class));
+            Level level = new Level(gson.fromJson(reader, int[][].class));
+
+            levels.add(level);
         }
     }
 
-    public int[][] getLevel(int currentLevel) {
-        return levels.get(currentLevel);
+    public int[][] getLevelArray(int currentLevel) {
+        return levels.get(currentLevel).getLevel();
+    }
+
+    public Level getCurrentLevel(int levelNum) {
+        return levels.get(levelNum);
     }
 
     public int getLevelsCount() {

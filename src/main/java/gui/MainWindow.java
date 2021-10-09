@@ -32,7 +32,9 @@ public class MainWindow extends JFrame
             }
 
             try {
-                level = new LevelPresenter(0, frame, usersProfile);
+                LevelController levelController = new LevelController(usersProfile);
+                levelController.setLevelNum(0);
+                level = new LevelPresenter(frame, levelController);
             } catch (IOException ioException) {
                 ioException.printStackTrace();
             }
@@ -53,7 +55,9 @@ public class MainWindow extends JFrame
             }
 
             try {
-                level = new LevelPresenter(usersProfile.getLevel(), frame, usersProfile);
+                LevelController levelController = new LevelController(usersProfile);
+                levelController.setLevelNum(usersProfile.getLevel());
+                level = new LevelPresenter(frame, levelController);
             } catch (IOException ioException) {
                 ioException.printStackTrace();
             }
