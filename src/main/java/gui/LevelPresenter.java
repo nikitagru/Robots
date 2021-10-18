@@ -12,6 +12,7 @@ public class LevelPresenter extends JPanel {
     private int currentFrame = 0;
 
     private LevelController levelController;
+    private RobotController robotController = new RobotController();
 
     private int[][] level;
 
@@ -41,23 +42,11 @@ public class LevelPresenter extends JPanel {
             @Override
             public void mouseClicked(MouseEvent e)
             {
-                levelController.getRobotController().setTargetPosition(e.getPoint());
+                robotController.setTargetPosition(e.getPoint());
             }
         });
 
         setDoubleBuffered(true);
-    }
-
-    public int[][] getLevel() {
-        return level;
-    }
-
-    public void setLevelPoint(int x, int y, int value) {
-        level[x][y] = value;
-    }
-
-    public void setLevel(int[][] level) {
-        this.level = level;
     }
 
     public JFrame getMainWindow() {
@@ -75,20 +64,35 @@ public class LevelPresenter extends JPanel {
         drawLevel(g);
         drawRobot(g);
         Graphics2D graphics2D = (Graphics2D)g;
-        drawTarget(graphics2D, levelController.getRobotController().getTargetPositionX(), levelController.getRobotController().getTargetPositionY());
-        levelController.changeLevel(this);
+        drawTarget(graphics2D, robotController.getTargetPositionX(), robotController.getTargetPositionY());
     }
 
     public void drawLevel(Graphics g) {
-        for (int i = 0; i < level.length; i++) {
-            for (int j = 0; j < level[0].length; j++) {
-                if (level[i][j] == 3) {
-                    drawFinish(g, j * levelController.getLinkSize() + levelController.getLevelGapX(),
-                            i * levelController.getLinkSize() + levelController.getLevelGapY());
+        Level level = levelController.getGameLevels().getCurrentLevel(levelController.getLevelNum());
+        int[][] levelArray = level.getLevel();
+        for (int i = 0; i < levelArray.length; i++) {
+            for (int j = 0; j < levelArray[0].length; j++) {
+                if (levelArray[i][j] == 3) {
+                    drawFinish(g, level.getFinishX() + levelController.getLevelGapX(),
+                            level.getFinishY() + levelController.getLevelGapY());
                 } else {
-                    levelController.drawComponent(this, i, j);
+                    drawComponent(i, j);
                 }
             }
+        }
+    }
+
+    public void drawComponent(int i, int j) {
+        Level level = levelController.getGameLevels().getCurrentLevel(levelController.getLevelNum());
+        int levelPoint = level.getLevel()[i][j];
+        if (levelPoint == 1) {
+            Wall wall = new Wall(j * 32 + levelController.getLevelGapX(),
+                    i * 32 + levelController.getLevelGapY());
+            wall.paintComponent(this.getGraphics());
+        } else if (levelPoint == 2) {
+            robotController.getRobot().setRobotPositionX(j * 32 + levelController.getLevelGapX());
+            robotController.getRobot().setRobotPositionY(i * 32 + levelController.getLevelGapY());
+            level.setLevelPoint(i, j, 0);
         }
     }
 
@@ -120,32 +124,37 @@ public class LevelPresenter extends JPanel {
     }
 
     private void onModelUpdateEvent() throws IOException {
-        levelController.getRobotController().updateRobot(level, levelController.getLinkSize(),
+        Level level = levelController.getGameLevels().getCurrentLevel(levelController.getLevelNum());
+        robotController.updateRobot(level.getLevel(), level.getLinkSize(),
                 levelController.getLevelGapX(), levelController.getLevelGapY());
+        if (robotController.isFinished(level.getFinishX(), level.getFinishY(), level.getLinkSize())) {
+            levelController.changeLevel(this);
+        }
     }
 
     public void drawRobot(Graphics g) {
-        levelController.changeRobotDirection();
-        double distance = levelController.getRobotController().distanceToTarget();
+        robotController.changeRobotDirection();
+        double distance = robotController.distanceToTarget();
 
         if (distance >= 10.0) {
             if (currentFrame == 14) {
                 currentFrame = 0;
             }
-            RobotImage robotImage = new RobotImage(currentFrame * 16,
-                    (int)levelController.getRobotController().getRobot().getRobotPositionX(),
-                    (int)levelController.getRobotController().getRobot().getRobotPositionY(),
-                    (int)levelController.getRobotController().getRobot().getRobotDirection());
+            RobotImage robotImage = createRobotImage(currentFrame * 16);
             robotImage.paintComponents(g);
             currentFrame++;
         } else {
-            RobotImage robotImage = new RobotImage(0,
-                    (int)levelController.getRobotController().getRobot().getRobotPositionX(),
-                    (int)levelController.getRobotController().getRobot().getRobotPositionY(),
-                    (int)levelController.getRobotController().getRobot().getRobotDirection());
+            RobotImage robotImage = createRobotImage(0);
             robotImage.paintComponents(g);
         }
 
+    }
+
+    private RobotImage createRobotImage(int imagePoxX) {
+        return new RobotImage(imagePoxX,
+                (int)robotController.getRobot().getRobotPositionX(),
+                (int)robotController.getRobot().getRobotPositionY(),
+                (int)robotController.getRobot().getRobotDirection());
     }
 
 }

@@ -60,4 +60,23 @@ public class RobotController {
         targetPositionX = p.x;
         targetPositionY = p.y;
     }
+
+    public boolean isFinished(int finishX, int finishY, int linkSize) {
+        if (robot.getRobotPositionX() <= finishX + linkSize
+                && robot.getRobotPositionX() >= finishX - linkSize
+                && robot.getRobotPositionY() <= finishY + linkSize
+                && robot.getRobotPositionY() >= finishY - linkSize) {
+            return true;
+        }
+        return false;
+    }
+
+    public void changeRobotDirection() {
+        if (robot.getRobotPositionX()
+                > targetPositionX) {
+            robot.setRobotDirection(1);
+        } else {
+            robot.setRobotDirection(0);
+        }
+    }
 }

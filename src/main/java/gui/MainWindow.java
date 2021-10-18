@@ -31,13 +31,7 @@ public class MainWindow extends JFrame
                 usersProfile = new UsersProfile(result);
             }
 
-            try {
-                LevelController levelController = new LevelController(usersProfile);
-                levelController.setLevelNum(0);
-                level = new LevelPresenter(frame, levelController);
-            } catch (IOException ioException) {
-                ioException.printStackTrace();
-            }
+            level = createLevelPresenter(0);
             frame.add(level);
             frame.setVisible(true);
 
@@ -54,13 +48,7 @@ public class MainWindow extends JFrame
                 usersProfile = new UsersProfile(result);
             }
 
-            try {
-                LevelController levelController = new LevelController(usersProfile);
-                levelController.setLevelNum(usersProfile.getLevel());
-                level = new LevelPresenter(frame, levelController);
-            } catch (IOException ioException) {
-                ioException.printStackTrace();
-            }
+            level = createLevelPresenter(usersProfile.getLevel());
             frame.add(level);
             frame.setVisible(true);
 
@@ -87,6 +75,17 @@ public class MainWindow extends JFrame
         frame.add(panel);
         frame.setSize(Toolkit.getDefaultToolkit().getScreenSize());
         frame.setVisible(true);
+    }
+
+    private LevelPresenter createLevelPresenter(int levelNum) {
+        LevelController levelController = new LevelController(usersProfile);
+        levelController.setLevelNum(levelNum);
+        try {
+            return new LevelPresenter(frame, levelController);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return null;
     }
 }
 
