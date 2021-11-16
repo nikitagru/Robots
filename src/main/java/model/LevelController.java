@@ -58,9 +58,7 @@ public class LevelController {
     public void changeLevel(LevelPresenter level) {
         levelNum++;
         if (levelNum == gameLevels.getLevelsCount() + 1) {
-            level.setVisible(false);
-            level.getMainWindow().setVisible(true);
-            level.getMainWindow().revalidate();
+            level.closeGameWindow();
         }
 
         usersProfile.setLevel(levelNum);

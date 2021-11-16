@@ -79,4 +79,9 @@ public class RobotController {
             robot.setRobotDirection(0);
         }
     }
+
+    public void changeRobotPosition(LevelController levelController, int i, int j) {
+        robot.setRobotPositionX(j * 32 + levelController.getLevelGapX());
+        robot.setRobotPositionY(i * 32 + levelController.getLevelGapY());
+    }
 }

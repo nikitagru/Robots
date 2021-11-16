@@ -21,10 +21,6 @@ public class Level {
         return linkSize;
     }
 
-    public void setLinkSize(int linkSize) {
-        this.linkSize = linkSize;
-    }
-
     public int[][] getLevel() {
         return level;
     }

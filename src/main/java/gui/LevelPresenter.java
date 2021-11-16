@@ -14,8 +14,6 @@ public class LevelPresenter extends JPanel {
     private LevelController levelController;
     private RobotController robotController = new RobotController();
 
-    private int[][] level;
-
     private JFrame mainWindow;
 
     
@@ -31,7 +29,6 @@ public class LevelPresenter extends JPanel {
 
 
     public LevelPresenter(JFrame frame, LevelController levelController) throws IOException {
-        level = levelController.getGameLevels().getLevelArray(levelController.getLevelNum());
         mainWindow = frame;
         this.levelController = levelController;
 
@@ -72,27 +69,24 @@ public class LevelPresenter extends JPanel {
         int[][] levelArray = level.getLevel();
         for (int i = 0; i < levelArray.length; i++) {
             for (int j = 0; j < levelArray[0].length; j++) {
-                if (levelArray[i][j] == 3) {
-                    drawFinish(g, level.getFinishX() + levelController.getLevelGapX(),
-                            level.getFinishY() + levelController.getLevelGapY());
-                } else {
-                    drawComponent(i, j);
-                }
+                int levelPoint = level.getLevel()[i][j];
+                drawComponent(i, j, levelPoint, g);
             }
         }
     }
 
-    public void drawComponent(int i, int j) {
+    public void drawComponent(int i, int j, int levelPoint, Graphics g) {
         Level level = levelController.getGameLevels().getCurrentLevel(levelController.getLevelNum());
-        int levelPoint = level.getLevel()[i][j];
         if (levelPoint == 1) {
             Wall wall = new Wall(j * 32 + levelController.getLevelGapX(),
                     i * 32 + levelController.getLevelGapY());
             wall.paintComponent(this.getGraphics());
         } else if (levelPoint == 2) {
-            robotController.getRobot().setRobotPositionX(j * 32 + levelController.getLevelGapX());
-            robotController.getRobot().setRobotPositionY(i * 32 + levelController.getLevelGapY());
+            robotController.changeRobotPosition(levelController, i, j);
             level.setLevelPoint(i, j, 0);
+        } else if (levelPoint == 3) {
+            drawFinish(g, level.getFinishX() + levelController.getLevelGapX(),
+                    level.getFinishY() + levelController.getLevelGapY());
         }
     }
 
@@ -127,9 +121,16 @@ public class LevelPresenter extends JPanel {
         Level level = levelController.getGameLevels().getCurrentLevel(levelController.getLevelNum());
         robotController.updateRobot(level.getLevel(), level.getLinkSize(),
                 levelController.getLevelGapX(), levelController.getLevelGapY());
+        robotController.changeRobotDirection();
         if (robotController.isFinished(level.getFinishX(), level.getFinishY(), level.getLinkSize())) {
             levelController.changeLevel(this);
         }
+    }
+
+    public void closeGameWindow() {
+        this.setVisible(false);
+        this.getMainWindow().setVisible(true);
+        this.getMainWindow().revalidate();
     }
 
     public void drawRobot(Graphics g) {
