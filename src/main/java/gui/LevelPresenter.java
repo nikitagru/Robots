@@ -12,7 +12,8 @@ public class LevelPresenter extends JPanel {
     private int currentFrame = 0;
 
     private LevelController levelController;
-    private RobotController robotController = new RobotController();
+    private RobotController robotController = new RobotController(levelController.getGameLevels().getCurrentLevel(levelController.getLevelNum()),
+            levelController.getLevelGapX(), levelController.getLevelGapY());
 
     private JFrame mainWindow;
 
@@ -81,12 +82,9 @@ public class LevelPresenter extends JPanel {
             Wall wall = new Wall(j * 32 + levelController.getLevelGapX(),
                     i * 32 + levelController.getLevelGapY());
             wall.paintComponent(this.getGraphics());
-        } else if (levelPoint == 2) {
-            robotController.changeRobotPosition(levelController, i, j);
-            level.setLevelPoint(i, j, 0);
         } else if (levelPoint == 3) {
             drawFinish(g, level.getFinishX() + levelController.getLevelGapX(),
-                    level.getFinishY() + levelController.getLevelGapY());
+                    level.getFinishY() + levelController.getLevelGapY());       // отрисовка точки финиша
         }
     }
 
@@ -123,7 +121,9 @@ public class LevelPresenter extends JPanel {
                 levelController.getLevelGapX(), levelController.getLevelGapY());
         robotController.changeRobotDirection();
         if (robotController.isFinished(level.getFinishX(), level.getFinishY(), level.getLinkSize())) {
-            levelController.changeLevel(this);
+            if (levelController.changeLevel()) {
+                this.closeGameWindow();
+            }
         }
     }
 
@@ -134,7 +134,6 @@ public class LevelPresenter extends JPanel {
     }
 
     public void drawRobot(Graphics g) {
-        robotController.changeRobotDirection();
         double distance = robotController.distanceToTarget();
 
         if (distance >= 10.0) {

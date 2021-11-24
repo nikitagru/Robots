@@ -55,11 +55,8 @@ public class LevelController {
         this.levelGapY = levelGapY;
     }
 
-    public void changeLevel(LevelPresenter level) {
+    public boolean changeLevel() {
         levelNum++;
-        if (levelNum == gameLevels.getLevelsCount() + 1) {
-            level.closeGameWindow();
-        }
 
         usersProfile.setLevel(levelNum);
         try {
@@ -67,6 +64,11 @@ public class LevelController {
         } catch (IOException e) {
             e.printStackTrace();
         }
+
+        if (levelNum == gameLevels.getLevelsCount() + 1) {
+            return true;
+        }
+        return false;
     }
 
 }

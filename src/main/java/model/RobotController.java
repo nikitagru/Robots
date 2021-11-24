@@ -1,5 +1,7 @@
 package model;
 
+import gui.Level;
+
 import javax.vecmath.Vector2d;
 import java.awt.*;
 import java.io.IOException;
@@ -9,6 +11,18 @@ public class RobotController {
     private volatile int targetPositionX = 150;
     private volatile int targetPositionY = 100;
     private Robot robot = new Robot();
+
+    public RobotController(Level level, int gapX, int gapY) {
+        int[][] levelArray = level.getLevel();
+        for (int i = 0; i < levelArray.length; i++) {
+            for (int j = 0; j < levelArray[0].length; j++) {
+                if (levelArray[i][j] == 2) {
+                    changeRobotPosition(gapX, gapY, i, j);
+                    level.setLevelPoint(i, j, 0);
+                }
+            }
+        }
+    }
 
     public Robot getRobot() {
         return robot;
@@ -80,8 +94,8 @@ public class RobotController {
         }
     }
 
-    public void changeRobotPosition(LevelController levelController, int i, int j) {
-        robot.setRobotPositionX(j * 32 + levelController.getLevelGapX());
-        robot.setRobotPositionY(i * 32 + levelController.getLevelGapY());
+    public void changeRobotPosition(int gapX, int gapY, int i, int j) {
+        robot.setRobotPositionX(j * 32 + gapX);
+        robot.setRobotPositionY(i * 32 + gapY);
     }
 }
