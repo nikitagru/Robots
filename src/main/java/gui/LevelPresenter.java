@@ -12,8 +12,7 @@ public class LevelPresenter extends JPanel {
     private int currentFrame = 0;
 
     private LevelController levelController;
-    private RobotController robotController = new RobotController(levelController.getGameLevels().getCurrentLevel(levelController.getLevelNum()),
-            levelController.getLevelGapX(), levelController.getLevelGapY());
+    private RobotController robotController;
 
     private JFrame mainWindow;
 
@@ -32,6 +31,8 @@ public class LevelPresenter extends JPanel {
     public LevelPresenter(JFrame frame, LevelController levelController) throws IOException {
         mainWindow = frame;
         this.levelController = levelController;
+        this.robotController = new RobotController(levelController.getGameLevels().getCurrentLevel(levelController.getLevelNum()),
+                levelController.getLevelGapX(), levelController.getLevelGapY());
 
         timer.start();
         timerMap.start();
@@ -121,7 +122,7 @@ public class LevelPresenter extends JPanel {
                 levelController.getLevelGapX(), levelController.getLevelGapY());
         robotController.changeRobotDirection();
         if (robotController.isFinished(level.getFinishX(), level.getFinishY(), level.getLinkSize())) {
-            if (levelController.changeLevel()) {
+            if (!levelController.changeLevel()) {
                 this.closeGameWindow();
             }
         }

@@ -66,9 +66,9 @@ public class LevelController {
         }
 
         if (levelNum == gameLevels.getLevelsCount() + 1) {
-            return true;
+            return false;
         }
-        return false;
+        return true;
     }
 
 }
