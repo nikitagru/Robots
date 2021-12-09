@@ -78,14 +78,13 @@ public class LevelPresenter extends JPanel {
     }
 
     public void drawComponent(int i, int j, int levelPoint, Graphics g) {
-        Level level = levelController.getGameLevels().getCurrentLevel(levelController.getLevelNum());
         if (levelPoint == 1) {
             Wall wall = new Wall(j * 32 + levelController.getLevelGapX(),
                     i * 32 + levelController.getLevelGapY());
             wall.paintComponent(this.getGraphics());
         } else if (levelPoint == 3) {
-            drawFinish(g, level.getFinishX() + levelController.getLevelGapX(),
-                    level.getFinishY() + levelController.getLevelGapY());       // отрисовка точки финиша
+            drawFinish(g, i * 32 + levelController.getLevelGapX(),
+                    j * 32 + levelController.getLevelGapY());       // отрисовка точки финиша
         }
     }
 
@@ -124,6 +123,9 @@ public class LevelPresenter extends JPanel {
         if (robotController.isFinished(level.getFinishX(), level.getFinishY(), level.getLinkSize())) {
             if (!levelController.changeLevel()) {
                 this.closeGameWindow();
+            } else {
+                this.robotController = new RobotController(levelController.getGameLevels().getCurrentLevel(levelController.getLevelNum()),
+                        levelController.getLevelGapX(), levelController.getLevelGapY());
             }
         }
     }
